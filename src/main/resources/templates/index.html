@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task List</title>
+    <link rel="stylesheet" type="text/css" href="/css/file.css">
+</head>
+<body>
+<dialog id="dialog">
+    <div id="task-form">
+        <form action="/tasks/" method="post" id="form">
+            <h2>Добавление задачи</h2>
+            <label>Название задачи: </label>
+            <input type="text" name="title" value="">
+            <label>Описание задачи: </label>
+            <input type="text" name="description" value="">
+            <hr>
+            <button id="save-task">Сохранить</button>
+            <button id="close">Закрыть</button>
+        </form>
+    </div>
+</dialog>
+<h1>Список задач на <span th:text="${timeNow}"></span></h1>
+<button id="show-add-task-form">Добавить задачу</button>
+<br><br>
+<div id="task-list">
+    <div th:each="task : ${tasks}">
+        <a href="#" class="task-link" th:attr="data-id=${task.id}" th:text="${task.title}"></a>
+    </div>
+</div>
+<script src="/js/main.js"></script>
+</body>
+</html>

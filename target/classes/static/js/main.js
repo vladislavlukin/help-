@@ -1,58 +1,51 @@
-$(function(){
+const dialog = document.getElementById('dialog');
+const buttonOpenDialog = document.getElementById('show-add-task-form');
+const buttonCloseDialog = document.getElementById('close');
+const form = document.getElementById('form');
+const taskList = document.getElementById('task-list');
 
-const appendTask = function(data){
-    var taskCode = '<a href="#" class="task-link" data-id="' + data.id + '">' + data.name + '</a><br>';
-    $('#task-list').append('<div>' + taskCode + '</div>');
-};
-$.get('/tasks/', function(response)
-{
-    for(i in response){
-        appendTask(response[i]);
-    }
+buttonOpenDialog.addEventListener('click', () => dialog.showModal());
+buttonCloseDialog.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    dialog.close();
 });
-$('#show-add-book-form').click(function(){
-    $('#task-form').css('display', 'flex');
+
+form.addEventListener('submit', async evt => {
+    evt.preventDefault();
+
+    dialog.close();
+
+    await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+     });
+
+
+    const response = await fetch('/tasks/', { method: 'GET' });
+    const data = await response.json();
+
+    console.log(data);
+
 });
-$('#task-form').click(function(event){
-    if(event.target === this) {
-    $(this).css('display', 'none');
-    }
-});
-$(document).on('click', '.task-link', function(){
-    var link = $(this);
-    var taskId = link.data('id');
-      $.ajax({
-            method: "GET",
-            url: '/tasks/' + taskId,
-            success: function(response)
-            {
-                var code = '<span>Срок выполнение задачи:' + response.date +  '</span>';
-                link.parent().append(code);
-                var code1 = '<span>Описание задачи:' + response.text +  '</span>';
-                link.parent().append(code1);
-            }
-            });
-            return false;
-});
-$('#save-task').click(function()
-{
-    var data = $('#task-form form').serialize();
-    $.ajax({
-        method:"POST",
-        url:'/tasks/',
-        data:data,
-        success: function(response)
-        {
-            $('#task-form').css('display', 'none');
-            var task = {};
-            task.id = response;
-            var dataArray = $('#task-form form').serializeArray();
-            for(i in dataArray){
-            task[dataArray[i]['name']] = dataArray[i]['value'];
-            }
-            appendTask(task);
-        }
-        });
-        return false;
-    });
-});
+    taskList.addEventListener('click', () => {
+             var data = $('#task-list');
+             var link = '<a href="#" class="task-link" data-id="' + data.id + '">' + data.title + '</a><br>';
+             var taskId = link.data('id');
+               $.ajax({
+                     method:"GET",
+                     url:'/tasks/' + taskId,
+                     success: function(response)
+                     {
+                         var code1 = '<span> Описание задачи:' + response.description +  '</span>';
+                         link.parent().append(code1);
+                     }
+                     });
+                     return false;
+         });
+
+
+
+
+
+
+
